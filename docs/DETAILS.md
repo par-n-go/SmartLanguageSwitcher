@@ -29,3 +29,13 @@ GitHub Actions validates the self-contained x64 EXE before uploading it. A `v*` 
 A warning can come from browser reputation, SmartScreen, Smart App Control or antivirus. Its exact wording matters. This project currently has no trusted code-signing identity. Distribution signing requires a verified publisher and a trusted certificate/service; self-signing is not a SmartScreen fix. Even a new trusted signature may need reputation. Do not disable Windows security to distribute the app. If antivirus identifies a specific threat, investigate it separately.
 
 References: [SendInput](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput), [layout requests](https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-inputlangchangerequest), [menu masking](https://github.com/AutoHotkey/AutoHotkeyDocs/blob/v2/docs/lib/A_MenuMaskKey.htm), [SmartScreen](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).
+
+## Automatic updates
+
+Enabled by default. Checks the latest stable GitHub release 30 seconds after launch and every six hours; the tray menu also offers a manual check. Older versions need one manual upgrade to v1.1.0 to gain the updater.
+
+The updater downloads only this repository's published EXE, checks its size, version, SHA-256 checksum and GitHub asset digest when available, then waits for shortcuts and settings to be idle. A temporary helper replaces the EXE at its existing path and restarts it. Settings and startup paths are preserved. If the new process does not acknowledge startup, the helper attempts rollback and restarts the previous EXE. A failed version is skipped by automatic checks; manual checks can retry it.
+
+The EXE folder must be writable. Offline access, GitHub rate limits, file locks or Windows policies can prevent an update; the current app remains available and later checks retry. Downloads/cache and the most recent error are under `%LOCALAPPDATA%\SmartLanguageSwitcher\updates`. Old helper files are cleaned on a later launch. SHA-256 verification checks integrity against GitHub; it is not publisher code signing, and unsigned-app restrictions still apply.
+
+The packaged validation script also tests actual replacement, restart and rollback using disposable copies. It does not modify the installed app or production settings.

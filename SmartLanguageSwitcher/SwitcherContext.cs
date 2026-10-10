@@ -8,22 +8,25 @@ internal sealed class SwitcherContext : ApplicationContext
     private readonly System.Windows.Forms.Timer poll = new() { Interval = 100 };
     private readonly Control dispatcher = new();
     private readonly LayoutHistory history;
+    private readonly AutoUpdater updater;
+    private readonly System.Windows.Forms.Timer updateTimer = new() { Interval = 30000 };
     private SettingsForm? form;
     private bool enabled = true;
     private nint sessionWindow, target;
     private bool released;
     private long deadline;
     private string? status;
-    public SwitcherContext()
+    public SwitcherContext(Action? ready = null)
     {
         var installed = Native.InstalledLayouts();
         history = new(Native.CurrentForegroundLayout(), Native.Resolve(settings.LastLayout, installed), Native.Resolve(settings.PreviousLayout, installed));
         dispatcher.CreateControl();
         tray = new() { Icon = AppIcon.Load(), Text = "Smart Language Switcher", Visible = true };
+        updater = new AutoUpdater(() => settings.AutoUpdate, () => form == null && !history.Active && !Native.IsKeyDown(0x5B) && !Native.IsKeyDown(0x5C) && !Native.IsKeyDown(0x12) && !Native.IsKeyDown(0x11), ExitThread, Warn);
         var menu = TrayMenu.Create(ShowSettings, paused => {
             enabled = !paused; EndSession();
             tray.Text = enabled ? "Smart Language Switcher" : "Smart Language Switcher (paused)";
-        }, ExitThread);
+        }, ExitThread, () => _ = updater.CheckAsync(manual: true));
         tray.ContextMenuStrip = menu;
         tray.DoubleClick += (_, _) => ShowSettings();
         // Queue all window queries, requests and disk work outside the low-level hook.
@@ -31,6 +34,10 @@ internal sealed class SwitcherContext : ApplicationContext
             QueueStep, () => dispatcher.BeginInvoke(Release));
         poll.Tick += (_, _) => Observe();
         poll.Start();
+        updateTimer.Tick += (_, _) => { updateTimer.Interval = 6 * 60 * 60 * 1000; _ = updater.CheckAsync(); };
+        updateTimer.Start();
+        _ = Task.Run(UpdateInstaller.CleanOldFiles);
+        if (ready != null) dispatcher.BeginInvoke(ready);
     }
     private void QueueStep()
     {
@@ -109,6 +116,7 @@ internal sealed class SwitcherContext : ApplicationContext
     }
     protected override void ExitThreadCore()
     {
+        updateTimer.Dispose(); updater.Dispose();
         EndSession(); poll.Dispose(); hook.Dispose(); form?.Dispose();
         tray.Visible = false; tray.ContextMenuStrip?.Dispose(); tray.Icon?.Dispose(); tray.Dispose(); dispatcher.Dispose();
         base.ExitThreadCore();

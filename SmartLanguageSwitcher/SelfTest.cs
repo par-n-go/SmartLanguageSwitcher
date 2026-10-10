@@ -103,7 +103,8 @@ internal static class SelfTest
             finally { File.Delete(temp); }
             using (var hook = new KeyboardHook(() => false, () => ShortcutKind.AltShift, () => { }, () => { }))
                 Check(true, "Windows low-level hook installs and disposes");
-            using (var settingsForm = new SettingsForm(new())) { settingsForm.CreateControl(); Check(settingsForm.Controls.Count == 10 && settingsForm.Icon != null, "settings form and custom icon initialize"); }
+            using (var settingsForm = new SettingsForm(new())) { settingsForm.CreateControl(); Check(settingsForm.Controls.Count == 12 && settingsForm.Icon != null, "settings form and custom icon initialize"); }
+            UpdateTests.Unit(Check);
             var installed = Native.InstalledLayouts();
             nint temporaryLayout = 0;
             if (installed.Count < 2) { temporaryLayout = Native.LoadKeyboardLayout("0000040C", 0); installed = Native.InstalledLayouts(); }

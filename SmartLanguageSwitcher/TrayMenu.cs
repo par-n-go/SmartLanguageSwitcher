@@ -3,7 +3,7 @@ using System.Drawing.Drawing2D;
 namespace SmartLanguageSwitcher;
 internal static class TrayMenu
 {
-    public static ContextMenuStrip Create(Action settings, Action<bool> pauseChanged, Action exit)
+    public static ContextMenuStrip Create(Action settings, Action<bool> pauseChanged, Action exit, Action? checkUpdates = null)
     {
         var menu = new ContextMenuStrip { BackColor = Theme.Background, ForeColor = Color.White,
             Font = new Font("Segoe UI", 10), Renderer = new MenuRenderer(), ShowImageMargin = false,
@@ -12,6 +12,7 @@ internal static class TrayMenu
         var pause = new ToolStripMenuItem("Pause") { CheckOnClick = true };
         pause.CheckedChanged += (_, _) => pauseChanged(pause.Checked);
         menu.Items.Add(pause); menu.Items.Add(new ToolStripSeparator());
+        if (checkUpdates != null) menu.Items.Add("Check for updates", null, (_, _) => checkUpdates());
         menu.Items.Add("Exit", null, (_, _) => exit());
         foreach (ToolStripItem item in menu.Items)
             if (item is ToolStripMenuItem) { item.Padding = new Padding(8, 7, 22, 7); item.ForeColor = Color.White; }
@@ -50,4 +51,3 @@ internal static class TrayMenu
         }
     }
 }
-

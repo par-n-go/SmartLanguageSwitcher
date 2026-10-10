@@ -1,6 +1,6 @@
-# v1.0.3
+# v1.1.0
 
-- Recover missed/synthetic Win releases so plain Space cannot use stale Win state.
-- Discard delayed switches after focus or settings changes.
+- Automatic GitHub updates with checksum verification and restart rollback.
+- Auto-update toggle and manual tray check.
 
-Windows can still change per-app layouts independently. Win+Space remains best effort. The EXE is unsigned.
+Install this version once; future updates are automatic. Requires a writable EXE folder. The EXE remains unsigned.

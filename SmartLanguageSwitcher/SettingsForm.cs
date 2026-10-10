@@ -16,7 +16,7 @@ internal sealed class SettingsForm : Form
         Font = new Font("Segoe UI", 10);
         BackColor = Background; ForeColor = Color.White;
         AutoScaleDimensions = new SizeF(96, 96); AutoScaleMode = AutoScaleMode.Dpi;
-        ClientSize = new Size(540, 390);
+        ClientSize = new Size(540, 445);
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false; MinimizeBox = false; StartPosition = FormStartPosition.CenterScreen;
         HandleCreated += (_, _) => { int dark = 1; DwmSetWindowAttribute(Handle, 20, ref dark, sizeof(int)); };
@@ -53,8 +53,15 @@ internal sealed class SettingsForm : Form
         try { startup.Checked = Startup.IsEnabled(); } catch { startup.Checked = settings.StartWithWindows; }
         void StyleStartup() { startup.Text = startup.Checked ? "On" : "Off"; startup.BackColor = startup.Checked ? Accent : Surface; startup.ForeColor = startup.Checked ? Background : Muted; }
         startup.CheckedChanged += (_, _) => StyleStartup(); StyleStartup();
-        var version = Label("v1.0.3", 28, 337, 150, 24, 9, Muted);
-        var save = new SmoothButton { Text = "Save", Location = new(392, 325), Size = new(120, 40), FlatStyle = FlatStyle.Flat,
+        var updateLabel = Label("Auto-update", 28, 314, 380, 26, 10, Color.White);
+        var autoUpdate = new SmoothToggle { Appearance = Appearance.Button, FlatStyle = FlatStyle.Flat, TextAlign = ContentAlignment.MiddleCenter,
+            Location = new(448, 307), Size = new(64, 36), UseVisualStyleBackColor = false, AccessibleName = "Auto-update", Cursor = Cursors.Hand,
+            Checked = settings.AutoUpdate };
+        autoUpdate.FlatAppearance.BorderSize = 0;
+        void StyleUpdate() { autoUpdate.Text = autoUpdate.Checked ? "On" : "Off"; autoUpdate.BackColor = autoUpdate.Checked ? Accent : Surface; autoUpdate.ForeColor = autoUpdate.Checked ? Background : Muted; }
+        autoUpdate.CheckedChanged += (_, _) => StyleUpdate(); StyleUpdate();
+        var version = Label("v" + AutoUpdater.CurrentVersion.ToString(3), 28, 392, 150, 24, 9, Muted);
+        var save = new SmoothButton { Text = "Save", Location = new(392, 380), Size = new(120, 40), FlatStyle = FlatStyle.Flat,
             BackColor = Accent, ForeColor = Background, Cursor = Cursors.Hand, UseVisualStyleBackColor = false };
         save.FlatAppearance.BorderSize = 0;
         save.Click += (_, _) => {
@@ -62,13 +69,14 @@ internal sealed class SettingsForm : Form
             try
             {
                 Startup.Set(startup.Checked);
+                settings.AutoUpdate = autoUpdate.Checked;
                 settings.StartWithWindows = startup.Checked; settings.Shortcut = selected;
                 if (!settings.Save()) throw new IOException("Could not save settings.");
                 Close();
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning); }
         };
-        Controls.AddRange([image, title, subtitle, heading, shortcutPanel, hint, startupLabel, startup, version, save]);
+        Controls.AddRange([image, title, subtitle, heading, shortcutPanel, hint, startupLabel, startup, updateLabel, autoUpdate, version, save]);
         void LayoutHeader()
         {
             title.Size = title.GetPreferredSize(new Size(title.MaximumSize.Width, 0));

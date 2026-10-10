@@ -4,6 +4,7 @@ internal enum ShortcutKind { AltShift, WinSpace, CtrlShift }
 internal sealed class Settings
 {
     public ShortcutKind Shortcut { get; set; } = ShortcutKind.AltShift;
+    public bool AutoUpdate { get; set; } = true;
     public bool StartWithWindows { get; set; }
     public string? LastLayout { get; set; }
     public string? PreviousLayout { get; set; }
