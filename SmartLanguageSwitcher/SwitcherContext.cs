@@ -20,12 +20,10 @@ internal sealed class SwitcherContext : ApplicationContext
         history = new(Native.CurrentForegroundLayout(), Native.Resolve(settings.LastLayout, installed), Native.Resolve(settings.PreviousLayout, installed));
         dispatcher.CreateControl();
         tray = new() { Icon = AppIcon.Load(), Text = "Smart Language Switcher", Visible = true };
-        var menu = new ContextMenuStrip();
-        menu.Items.Add("Settings", null, (_, _) => ShowSettings());
-        var pause = new ToolStripMenuItem("Pause") { CheckOnClick = true };
-        pause.CheckedChanged += (_, _) => { enabled = !pause.Checked; EndSession(); tray.Text = enabled ? "Smart Language Switcher" : "Smart Language Switcher (paused)"; };
-        menu.Items.Add(pause);
-        menu.Items.Add("Exit", null, (_, _) => ExitThread());
+        var menu = TrayMenu.Create(ShowSettings, paused => {
+            enabled = !paused; EndSession();
+            tray.Text = enabled ? "Smart Language Switcher" : "Smart Language Switcher (paused)";
+        }, ExitThread);
         tray.ContextMenuStrip = menu;
         tray.DoubleClick += (_, _) => ShowSettings();
         // Queue all window queries, requests and disk work outside the low-level hook.
@@ -103,4 +101,3 @@ internal sealed class SwitcherContext : ApplicationContext
         base.ExitThreadCore();
     }
 }
-

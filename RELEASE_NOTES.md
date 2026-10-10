@@ -1,7 +1,7 @@
-# v1.0.1
+# v1.0.2
 
-- Add Start-menu suppression for consumed Win+Space gestures.
-- New app/tray icon and compact settings UI.
-- Shorter documentation and additional regression checks.
+- Smooth, DPI-aware controls without jagged clipping.
+- Matching dark tray menu with mint accents.
+- Full title text and a sharper settings icon.
 
-Win+Space remains best effort; physical-key confirmation is still required. The EXE is unsigned.
+Win+Space remains best effort. The EXE is unsigned.
