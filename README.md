@@ -23,9 +23,9 @@ The EXE is unsigned, so SmartScreen may flag it as unrecognized. If you download
 
 | 1. More info | 2. Run anyway |
 | --- | --- |
-| <img src="docs/images/smartscreen-more-info.png" alt="Windows 11 SmartScreen: More info link (Weitere Informationen)" width="320"> | <img src="docs/images/smartscreen-run-anyway.png" alt="Expanded SmartScreen: Run anyway button (Trotzdem ausführen)" width="320"> |
+| <img src="docs/images/smartscreen-more-info.svg" alt="English SmartScreen example: red arrow pointing to More info" width="320"> | <img src="docs/images/smartscreen-run-anyway.svg" alt="English SmartScreen example: red arrow pointing to Run anyway" width="320"> |
 
-Example screenshots show another app on German Windows 11; wording, app name and colors vary. [Image sources](docs/DETAILS.md#screenshot-sources).
+English SmartScreen illustrations; appearance varies by Windows version. [Image sources](docs/DETAILS.md#image-sources).
 
 This permits this launch; it does not sign the app or guarantee future warnings disappear. If **Run anyway** is unavailable, or antivirus reports a specific threat, these steps do not apply. Keep Windows protection enabled. [Microsoft guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).
 

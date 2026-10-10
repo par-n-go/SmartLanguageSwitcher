@@ -40,6 +40,6 @@ The EXE folder must be writable. Offline access, GitHub rate limits, file locks 
 
 The packaged validation script also tests actual replacement, restart and rollback using disposable copies. It does not modify the installed app or production settings.
 
-## Screenshot sources
+## Image sources
 
-Unmodified Windows 11 SmartScreen examples by PantheraLeo1359531, OS by Microsoft, via Wikimedia Commons: [More info](https://commons.wikimedia.org/wiki/File:20231028_21_49_36-SmartScreen.png) and [Run anyway](https://commons.wikimedia.org/wiki/File:20231028_21_49_39-SmartScreen.png). Both are marked public domain (PD-text) on their source pages. They show a different application in German, not this project's executable.
+English SmartScreen illustrations by ToBeFree via Wikimedia Commons: [More info](https://commons.wikimedia.org/wiki/File:Smartscreen-warning-1-arrow.svg) and [Run anyway](https://commons.wikimedia.org/wiki/File:Smartscreen-warning-2-arrow.svg). Public domain; arrows changed from green to red. These are vector recreations of the Windows 10 prompts, not screenshots of this app. Windows 11 appearance may differ.

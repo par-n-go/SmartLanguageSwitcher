@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="500"
+   height="250"
+   viewBox="0 0 132.29166 66.145833"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="smartscreen-tobefree-1-arrow.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.89958333"
+     inkscape:cx="325.02635"
+     inkscape:cy="69.802097"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4504"
+       units="px"
+       dotted="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="" />
+        <dc:date>2018-06-06</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title></dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-230.85417)">
+    <rect
+       style="fill:#0244a0;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       id="rect4506"
+       width="132.29167"
+       height="66.145836"
+       x="0"
+       y="230.85417" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       id="rect4508"
+       width="13.229167"
+       height="7.9375"
+       x="119.0625"
+       y="230.85417" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 124.35417,236.14584 127,233.5"
+       id="path4522"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 127,236.14584 124.35417,233.5"
+       id="path4524"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="3.7579103"
+       y="240.11665"
+       id="text4528"><tspan
+         sodipodi:role="line"
+         id="tspan4526"
+         x="3.7579103"
+         y="240.11665"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';fill:#ffffff;fill-opacity:1;stroke-width:0.26458332">Windows protected your PC</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="3.5122652"
+       y="246.93715"
+       id="text4532"><tspan
+         sodipodi:role="line"
+         id="tspan4530"
+         x="3.5122652"
+         y="246.93715"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.26458332;-inkscape-font-specification:'DejaVu Sans';font-family:'DejaVu Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">Windows Defender SmartScreen prevented an</tspan><tspan
+         sodipodi:role="line"
+         x="3.5122652"
+         y="252.22882"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.26458332;-inkscape-font-specification:'DejaVu Sans';font-family:'DejaVu Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
+         id="tspan4534">unrecognized app from starting. Running this app</tspan><tspan
+         sodipodi:role="line"
+         x="3.5122652"
+         y="257.52048"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.26458332;-inkscape-font-specification:'DejaVu Sans';font-family:'DejaVu Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
+         id="tspan4536">might put your PC at risk.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;text-align:start;text-decoration: underline;text-decoration-line: underline;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="3.5532715"
+       y="267.83591"
+       id="text4540"><tspan
+         sodipodi:role="line"
+         id="tspan4538"
+         x="3.5532715"
+         y="267.83591"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:0.26458332">More info</tspan></text>
+    <rect
+       style="fill:#2660cf;fill-opacity:1;stroke:#ffffff;stroke-width:1.05833333;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       id="rect4542"
+       width="18"
+       height="6"
+       x="105.83334"
+       y="284.38541" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-opacity:1;"
+       x="114.78973"
+       y="288.18625"
+       id="text4546"><tspan
+         sodipodi:role="line"
+         id="tspan4544"
+         x="114.78973"
+         y="288.18625"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';text-align:center;text-anchor:middle;stroke-width:0.26458332;stroke:none;stroke-opacity:1;fill:#ffffff;fill-opacity:1;">Don't run</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.93333244px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';letter-spacing:0px;word-spacing:0px;fill:#ff3030;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
+       x="26.00358"
+       y="271.64963"
+       id="text4554"><tspan
+         sodipodi:role="line"
+         id="tspan4552"
+         x="26.00358"
+         y="271.64963"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';fill:#ff3030;fill-opacity:1;stroke-width:0.26458332;">⬅</tspan></text>
+  </g>
+</svg>
