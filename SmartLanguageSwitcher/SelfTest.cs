@@ -18,12 +18,24 @@ internal static class SelfTest
                 Check(!chord.Process(modifier, true, true, mode).Suppress, mode + " modifier passes");
                 var first = chord.Process(trigger, true, true, mode);
                 Check(first.Step && first.Suppress, mode + " first press");
+                Check(first.MaskStart == (mode == ShortcutKind.WinSpace), mode + " menu masking only for Win+Space");
                 var repeat = chord.Process(trigger, true, true, mode);
                 Check(!repeat.Step && repeat.Suppress, mode + " repeat suppressed");
                 Check(chord.Process(trigger, false, true, mode).Suppress, mode + " trigger release suppressed");
                 Check(chord.Process(trigger, true, true, mode).Step, mode + " next press");
                 Check(chord.Process(modifier, false, true, mode).Finish, mode + " modifier release commits");
                 Check(chord.Process(trigger, false, false, mode).Suppress, mode + " late release paired while disabled");
+            }
+            foreach (uint win in new uint[] { 0x5B, 0x5C })
+            {
+                var chord = new ChordState();
+                Check(!chord.Process(win, true, true, ShortcutKind.WinSpace).MaskStart, "Win alone is not masked " + win);
+                Check(chord.Process(0x20, true, true, ShortcutKind.WinSpace).MaskStart, "Win+Space requests mask " + win);
+                Check(chord.Process(win, true, true, ShortcutKind.WinSpace).Suppress, "Win repeat does not re-arm Start " + win);
+                Check(!chord.Process(win, false, true, ShortcutKind.WinSpace).Suppress, "Win release passes to prevent stuck key " + win);
+                var paused = new ChordState();
+                paused.Process(win, true, false, ShortcutKind.WinSpace);
+                Check(!paused.Process(0x20, true, false, ShortcutKind.WinSpace).MaskStart, "paused chord not masked " + win);
             }
             var dual = new ChordState();
             dual.Process(0xA4, true, true, ShortcutKind.AltShift);
@@ -67,7 +79,7 @@ internal static class SelfTest
             finally { File.Delete(temp); }
             using (var hook = new KeyboardHook(() => false, () => ShortcutKind.AltShift, () => { }, () => { }))
                 Check(true, "Windows low-level hook installs and disposes");
-            using (var settingsForm = new SettingsForm(new())) { settingsForm.CreateControl(); Check(settingsForm.Controls.Count == 5, "settings form initializes"); }
+            using (var settingsForm = new SettingsForm(new())) { settingsForm.CreateControl(); Check(settingsForm.Controls.Count == 10 && settingsForm.Icon != null, "settings form and custom icon initialize"); }
             var installed = Native.InstalledLayouts();
             nint temporaryLayout = 0;
             if (installed.Count < 2) { temporaryLayout = Native.LoadKeyboardLayout("0000040C", 0); installed = Native.InstalledLayouts(); }
@@ -105,4 +117,6 @@ internal static class SelfTest
         return exit;
     }
 }
+
+
 

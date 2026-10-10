@@ -19,7 +19,7 @@ internal sealed class SwitcherContext : ApplicationContext
         var installed = Native.InstalledLayouts();
         history = new(Native.CurrentForegroundLayout(), Native.Resolve(settings.LastLayout, installed), Native.Resolve(settings.PreviousLayout, installed));
         dispatcher.CreateControl();
-        tray = new() { Icon = SystemIcons.Application, Text = "Smart Language Switcher", Visible = true };
+        tray = new() { Icon = AppIcon.Load(), Text = "Smart Language Switcher", Visible = true };
         var menu = new ContextMenuStrip();
         menu.Items.Add("Settings", null, (_, _) => ShowSettings());
         var pause = new ToolStripMenuItem("Pause") { CheckOnClick = true };
@@ -99,7 +99,8 @@ internal sealed class SwitcherContext : ApplicationContext
     protected override void ExitThreadCore()
     {
         EndSession(); poll.Dispose(); hook.Dispose(); form?.Dispose();
-        tray.Visible = false; tray.ContextMenuStrip?.Dispose(); tray.Dispose(); dispatcher.Dispose();
+        tray.Visible = false; tray.ContextMenuStrip?.Dispose(); tray.Icon?.Dispose(); tray.Dispose(); dispatcher.Dispose();
         base.ExitThreadCore();
     }
 }
+

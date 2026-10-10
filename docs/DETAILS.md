@@ -1,0 +1,31 @@
+# Technical details
+
+## Shortcuts
+
+Hold Alt, Ctrl or Win before pressing Shift or Space. First press selects the previous layout; further presses visit other installed layouts, then the starting layout. Auto-repeat does not cycle. The last observed layout is committed on modifier release. With no valid history, the first other installed layout is used.
+
+Left/right modifiers are tracked separately. Ctrl+Alt chords are excluded for AltGr. Injected keystrokes do not activate switching. Win+Space sends an unassigned VK_E8 down/up pair when consumed so Windows does not mistake the gesture for Win alone. Win-up is still delivered to avoid a stuck modifier. This relies on shell behavior and remains best effort, especially across integrity levels and other hooks. Alt may still activate an application menu.
+
+To disable native Alt+Shift/Ctrl+Shift: Settings → Time & language → Typing → Advanced keyboard settings → Input language hot keys → Change Key Sequence → Not Assigned. Check per-language shortcuts too. Win+Space's shell flyout cannot be universally suppressed.
+
+## History and persistence
+
+The foreground thread's HKL is sampled every 100 ms. External changes and application focus changes update a global recent-layout pair. Intermediate session selections are excluded. Requests have 800 ms to be confirmed; failures follow the actual observed layout. Fast changes between samples may be missed.
+
+Settings are atomically replaced in `%APPDATA%\SmartLanguageSwitcher\settings.json`. Corrupt settings fall back to defaults; removed layouts are ignored. HKLs are not stable identifiers for every IME/profile across restarts. TSF/IME modes, elevated apps, games, remote sessions and secure desktop are not universally supported. A stalled UI thread may cause Windows to remove the keyboard hook.
+
+Startup uses `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\SmartLanguageSwitcher`. Windows Startup Apps can separately disable it. To uninstall: disable startup, exit, delete the EXE and optionally the settings folder.
+
+## Validation and releases
+
+`--self-test <report.json>` runs deterministic chord/history/persistence tests, hook installation, icon/settings initialization, and real Win32 layout requests against a test window. `scripts/Validate.ps1` executes the packaged EXE with a timeout. A runner with one layout temporarily loads French. Tests do not enable startup or write production settings.
+
+Physical Win+Space interaction with the shell requires manual testing; simulated input did not reliably reproduce the reported Start-menu behavior. Test Win alone, both Win keys with Space, repeated Space presses, external layout changes and startup after sign-in. The settings UI can be inspected without saving with `--preview-settings`.
+
+GitHub Actions validates the self-contained x64 EXE before uploading it. A `v*` tag publishes the EXE, SHA-256 checksum and validation report only after success. The runtime extracts bundled native components into a temporary cache. The icon includes nine sizes from 16 to 256 pixels; regenerate with `scripts/Generate-Icon.ps1`.
+
+## Download warnings
+
+A warning can come from browser reputation, SmartScreen, Smart App Control or antivirus. Its exact wording matters. This project currently has no trusted code-signing identity. Distribution signing requires a verified publisher and a trusted certificate/service; self-signing is not a SmartScreen fix. Even a new trusted signature may need reputation. Do not disable Windows security to distribute the app. If antivirus identifies a specific threat, investigate it separately.
+
+References: [SendInput](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput), [layout requests](https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-inputlangchangerequest), [menu masking](https://github.com/AutoHotkey/AutoHotkeyDocs/blob/v2/docs/lib/A_MenuMaskKey.htm), [SmartScreen](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).

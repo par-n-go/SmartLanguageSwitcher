@@ -10,7 +10,7 @@ internal sealed class ChordState
     private bool Ctrl => held.Contains(0xA2) || held.Contains(0xA3) || held.Contains(0x11);
     private bool Win => held.Contains(0x5B) || held.Contains(0x5C);
     private bool Shift => held.Contains(0xA0) || held.Contains(0xA1) || held.Contains(0x10);
-    public (bool Suppress, bool Step, bool Finish) Process(uint key, bool down, bool enabled, ShortcutKind shortcut)
+    public (bool Suppress, bool Step, bool Finish, bool MaskStart) Process(uint key, bool down, bool enabled, ShortcutKind shortcut)
     {
         bool fresh = down ? held.Add(key) : held.Remove(key);
         bool suppress = swallowed.Contains(key);
@@ -25,6 +25,14 @@ internal sealed class ChordState
         };
         bool step = down && fresh && enabled && trigger;
         if (step) { session = shortcut; swallowed.Add(key); suppress = true; }
-        return (suppress, step, finish);
+        bool maskStart = step && shortcut == ShortcutKind.WinSpace;
+        // A repeated Win-down after a consumed chord must not re-arm Start.
+        if (session == ShortcutKind.WinSpace && down && key is 0x5B or 0x5C)
+        {
+            if (!fresh) suppress = true;
+            else maskStart = true;
+        }
+        return (suppress, step, finish, maskStart);
     }
 }
+

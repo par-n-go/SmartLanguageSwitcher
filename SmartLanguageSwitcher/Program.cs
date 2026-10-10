@@ -6,9 +6,12 @@ internal static class Program
     {
         ApplicationConfiguration.Initialize();
         if (args.Length == 2 && args[0] == "--self-test") return SelfTest.Run(Path.GetFullPath(args[1]));
+        if (args.Length == 1 && args[0] == "--preview-settings") { Application.Run(new SettingsForm(Settings.Load(), preview: true)); return 0; }
         using var mutex = new Mutex(true, @"Local\SmartLanguageSwitcher.SingleInstance", out bool owner);
         if (!owner) return 0;
         try { Application.Run(new SwitcherContext()); return 0; }
         catch (Exception e) { MessageBox.Show(e.Message, "Smart Language Switcher", MessageBoxButtons.OK, MessageBoxIcon.Error); return 1; }
     }
 }
+
+

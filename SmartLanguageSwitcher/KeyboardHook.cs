@@ -17,6 +17,7 @@ internal sealed class KeyboardHook : IDisposable
                 if ((info.Flags & Native.LLKHF_INJECTED) == 0)
                 {
                     var result = state.Process(info.VkCode, (int)message is Native.WM_KEYDOWN or Native.WM_SYSKEYDOWN, enabled(), shortcut());
+                    if (result.MaskStart) Native.MaskStartMenu();
                     if (result.Finish) finish();
                     if (result.Step) step();
                     if (result.Suppress) return 1;
@@ -29,4 +30,6 @@ internal sealed class KeyboardHook : IDisposable
     }
     public void Dispose() { if (handle != 0) Native.UnhookWindowsHookEx(handle); handle = 0; }
 }
+
+
 

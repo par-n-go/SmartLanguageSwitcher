@@ -4,6 +4,10 @@ namespace SmartLanguageSwitcher;
 
 internal static class Native
 {
+    // VK_E8 is unassigned: it marks Win as used without typing a character or changing Ctrl state.
+    // Keep the physical Win-up visible to Windows to avoid a stuck logical modifier.
+    public static bool MaskStartMenu() => KeyboardInput.Send(0, (0xE8, false), (0xE8, true));
+
     public const int WH_KEYBOARD_LL = 13;
     public const int WM_KEYDOWN = 0x0100, WM_KEYUP = 0x0101;
     public const int WM_SYSKEYDOWN = 0x0104, WM_SYSKEYUP = 0x0105;
@@ -107,5 +111,6 @@ internal static class Native
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetGUIThreadInfo(uint threadId, ref GuiThreadInfo info);
 }
+
 
 
