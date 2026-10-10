@@ -24,7 +24,6 @@ foreach ($size in @(16,20,24,32,40,48,64,128,256)) {
     $g.DrawString([string][char]0x05D0,$font,$navy,[Drawing.RectangleF]::new(105,93,120,127),$format)
     $stream = [IO.MemoryStream]::new(); $bmp.Save($stream,[Drawing.Imaging.ImageFormat]::Png)
     $frames += ,@($size,$stream.ToArray())
-    if ($size -eq 256) { $bmp.Save((Join-Path $asset 'app-icon.png'),[Drawing.Imaging.ImageFormat]::Png) }
     $stream.Dispose(); $font.Dispose(); $format.Dispose(); $cyan.Dispose(); $navy.Dispose(); $g.Dispose(); $bmp.Dispose()
 }
 $file = [IO.File]::Create((Join-Path $asset 'app.ico')); $writer = [IO.BinaryWriter]::new($file)

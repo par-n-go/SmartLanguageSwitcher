@@ -11,7 +11,25 @@ A small Windows 11 tray app. Switch to your previous keyboard layout, or hold th
 
 **Limits:** Disable the matching Windows Alt+Shift/Ctrl+Shift shortcut. Win+Space is best effort. Some elevated apps and IMEs may reject switching.
 
-**Download warning?** The EXE is unsigned. Trusted code signing requires a verified publisher; signing alone does not guarantee immediate SmartScreen reputation. [Microsoft guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation)
+**Why ~50 MB?** The EXE bundles the .NET 10 Desktop Runtime, including Windows Forms, so no separate runtime installation is needed. Most of the download is the runtime, not the switcher itself.
+
+<details>
+<summary>First launch: “Windows protected your PC”</summary>
+
+The EXE is unsigned, so SmartScreen may flag it as unrecognized. If you downloaded it from this repository's [Releases](https://github.com/par-n-go/SmartLanguageSwitcher/releases/latest) and trust it:
+
+1. Select **More info**.
+2. Check that the app is **SmartLanguageSwitcher.exe**, then select **Run anyway**.
+
+| 1. More info | 2. Run anyway |
+| --- | --- |
+| <img src="docs/images/smartscreen-more-info.png" alt="Windows 11 SmartScreen: More info link (Weitere Informationen)" width="320"> | <img src="docs/images/smartscreen-run-anyway.png" alt="Expanded SmartScreen: Run anyway button (Trotzdem ausführen)" width="320"> |
+
+Example screenshots show another app on German Windows 11; wording, app name and colors vary. [Image sources](docs/DETAILS.md#screenshot-sources).
+
+This permits this launch; it does not sign the app or guarantee future warnings disappear. If **Run anyway** is unavailable, or antivirus reports a specific threat, these steps do not apply. Keep Windows protection enabled. [Microsoft guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).
+
+</details>
 
 ### Build
 

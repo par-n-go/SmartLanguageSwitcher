@@ -39,3 +39,7 @@ The updater downloads only this repository's published EXE, checks its size, ver
 The EXE folder must be writable. Offline access, GitHub rate limits, file locks or Windows policies can prevent an update; the current app remains available and later checks retry. Downloads/cache and the most recent error are under `%LOCALAPPDATA%\SmartLanguageSwitcher\updates`. Old helper files are cleaned on a later launch. SHA-256 verification checks integrity against GitHub; it is not publisher code signing, and unsigned-app restrictions still apply.
 
 The packaged validation script also tests actual replacement, restart and rollback using disposable copies. It does not modify the installed app or production settings.
+
+## Screenshot sources
+
+Unmodified Windows 11 SmartScreen examples by PantheraLeo1359531, OS by Microsoft, via Wikimedia Commons: [More info](https://commons.wikimedia.org/wiki/File:20231028_21_49_36-SmartScreen.png) and [Run anyway](https://commons.wikimedia.org/wiki/File:20231028_21_49_39-SmartScreen.png). Both are marked public domain (PD-text) on their source pages. They show a different application in German, not this project's executable.
