@@ -1,7 +1,6 @@
-# v1.0.2
+# v1.0.3
 
-- Smooth, DPI-aware controls without jagged clipping.
-- Matching dark tray menu with mint accents.
-- Full title text and a sharper settings icon.
+- Recover missed/synthetic Win releases so plain Space cannot use stale Win state.
+- Discard delayed switches after focus or settings changes.
 
-Win+Space remains best effort. The EXE is unsigned.
+Windows can still change per-app layouts independently. Win+Space remains best effort. The EXE is unsigned.

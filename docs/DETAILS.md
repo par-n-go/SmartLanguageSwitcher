@@ -4,7 +4,7 @@
 
 Hold Alt, Ctrl or Win before pressing Shift or Space. First press selects the previous layout; further presses visit other installed layouts, then the starting layout. Auto-repeat does not cycle. The last observed layout is committed on modifier release. With no valid history, the first other installed layout is used.
 
-Left/right modifiers are tracked separately. Ctrl+Alt chords are excluded for AltGr. Injected keystrokes do not activate switching. Win+Space sends an unassigned VK_E8 down/up pair when consumed so Windows does not mistake the gesture for Win alone. Win-up is still delivered to avoid a stuck modifier. This relies on shell behavior and remains best effort, especially across integrity levels and other hooks. Alt may still activate an application menu.
+Left/right modifiers are tracked separately. Observed modifiers are checked against Windows state to recover missed releases; synthetic releases also clear them. Snapshots never arm a new chord. Queued requests are discarded after a focus change, pause, settings change or 250 ms delay. Ctrl+Alt chords are excluded for AltGr. Injected keystrokes do not activate switching. Win+Space sends an unassigned VK_E8 down/up pair when consumed so Windows does not mistake the gesture for Win alone. Win-up is still delivered to avoid a stuck modifier. This relies on shell behavior and remains best effort, especially across integrity levels and other hooks. Alt may still activate an application menu.
 
 To disable native Alt+Shift/Ctrl+Shift: Settings → Time & language → Typing → Advanced keyboard settings → Input language hot keys → Change Key Sequence → Not Assigned. Check per-language shortcuts too. Win+Space's shell flyout cannot be universally suppressed.
 

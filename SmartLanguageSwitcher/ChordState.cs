@@ -10,8 +10,21 @@ internal sealed class ChordState
     private bool Ctrl => held.Contains(0xA2) || held.Contains(0xA3) || held.Contains(0x11);
     private bool Win => held.Contains(0x5B) || held.Contains(0x5C);
     private bool Shift => held.Contains(0xA0) || held.Contains(0xA1) || held.Contains(0x10);
-    public (bool Suppress, bool Step, bool Finish, bool MaskStart) Process(uint key, bool down, bool enabled, ShortcutKind shortcut)
+    private bool ModifierHeld(ShortcutKind mode) => mode switch {
+        ShortcutKind.AltShift => Alt, ShortcutKind.CtrlShift => Ctrl, _ => Win };
+    private static bool PrimaryModifier(uint key) => key is 0x12 or 0xA4 or 0xA5 or 0x11 or 0xA2 or 0xA3 or 0x5B or 0x5C;
+    public bool Reconcile(Func<uint, bool> isDown, uint eventKey = 0)
     {
+        // The current hook event precedes its async state update; never query that key.
+        // Only prune observed modifiers. A snapshot must never arm a new shortcut.
+        held.RemoveWhere(key => key != eventKey && PrimaryModifier(key) && !isDown(key));
+        if (session is not { } mode || ModifierHeld(mode)) return false;
+        session = null;
+        return true;
+    }
+    public (bool Suppress, bool Step, bool Finish, bool MaskStart) Process(uint key, bool down, bool enabled, ShortcutKind shortcut, Func<uint, bool>? isDown = null)
+    {
+        bool recoveredRelease = isDown != null && Reconcile(isDown, key);
         bool fresh = down ? held.Add(key) : held.Remove(key);
         bool suppress = swallowed.Contains(key);
         if (!down) swallowed.Remove(key);
@@ -32,7 +45,6 @@ internal sealed class ChordState
             if (!fresh) suppress = true;
             else maskStart = true;
         }
-        return (suppress, step, finish, maskStart);
+        return (suppress, step, finish || recoveredRelease, maskStart);
     }
 }
-

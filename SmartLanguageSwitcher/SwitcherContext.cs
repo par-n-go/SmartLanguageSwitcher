@@ -28,9 +28,21 @@ internal sealed class SwitcherContext : ApplicationContext
         tray.DoubleClick += (_, _) => ShowSettings();
         // Queue all window queries, requests and disk work outside the low-level hook.
         hook = new(() => enabled && form == null, () => settings.Shortcut,
-            () => dispatcher.BeginInvoke(Step), () => dispatcher.BeginInvoke(Release));
+            QueueStep, () => dispatcher.BeginInvoke(Release));
         poll.Tick += (_, _) => Observe();
         poll.Start();
+    }
+    private void QueueStep()
+    {
+        var expectedWindow = Native.GetForegroundWindow();
+        var expectedShortcut = settings.Shortcut;
+        long requestedAt = Environment.TickCount64;
+        dispatcher.BeginInvoke(() => {
+            if (!enabled || form != null || settings.Shortcut != expectedShortcut ||
+                expectedWindow == 0 || Native.GetForegroundWindow() != expectedWindow ||
+                Environment.TickCount64 - requestedAt > 250) return;
+            Step();
+        });
     }
     private void Step()
     {
@@ -50,6 +62,7 @@ internal sealed class SwitcherContext : ApplicationContext
     private void Release() { released = true; Observe(); }
     private void Observe()
     {
+        hook.Reconcile();
         var actual = Native.CurrentForegroundLayout();
         if (history.Active)
         {

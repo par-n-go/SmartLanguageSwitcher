@@ -37,6 +37,30 @@ internal static class SelfTest
                 paused.Process(win, true, false, ShortcutKind.WinSpace);
                 Check(!paused.Process(0x20, true, false, ShortcutKind.WinSpace).MaskStart, "paused chord not masked " + win);
             }
+            foreach (uint modifier in new uint[] { 0x5B, 0x5C, 0xA4, 0xA2 })
+            {
+                var mode = modifier == 0xA4 ? ShortcutKind.AltShift : modifier == 0xA2 ? ShortcutKind.CtrlShift : ShortcutKind.WinSpace;
+                uint trigger = mode == ShortcutKind.WinSpace ? 0x20u : 0xA0u;
+                var recovered = new ChordState();
+                recovered.Process(modifier, true, true, mode);
+                recovered.Process(trigger, true, true, mode);
+                recovered.Process(trigger, false, true, mode);
+                var plain = recovered.Process(trigger, true, true, mode, _ => false);
+                Check(!plain.Step && !plain.Suppress && plain.Finish, "missed modifier release does not consume typing " + modifier);
+                recovered.Process(trigger, false, true, mode);
+                Check(recovered.Process(modifier, true, true, mode, _ => false).Step == false, "current modifier down ignores old async state " + modifier);
+                Check(recovered.Process(trigger, true, true, mode, k => k == modifier).Step, "fresh physical chord works after recovery " + modifier);
+                recovered.Process(trigger, false, true, mode);
+                Check(recovered.Process(modifier, false, false, mode).Finish, "synthetic release ends observed session " + modifier);
+                Check(!recovered.Process(trigger, true, true, mode, _ => false).Step, "typing after synthetic release does not switch " + modifier);
+            }
+            var snapshotOnly = new ChordState();
+            Check(!snapshotOnly.Process(0x20, true, true, ShortcutKind.WinSpace, _ => true).Step, "snapshot cannot arm an unobserved Win chord");
+            var bothWin = new ChordState();
+            bothWin.Process(0x5B, true, true, ShortcutKind.WinSpace);
+            bothWin.Process(0x5C, true, true, ShortcutKind.WinSpace);
+            Check(bothWin.Process(0x20, true, true, ShortcutKind.WinSpace, key => key == 0x5C).Step, "recovery keeps the other held Win key");
+            Check(bothWin.Reconcile(_ => false) && !bothWin.Reconcile(_ => false), "idle reconciliation finishes once");
             var dual = new ChordState();
             dual.Process(0xA4, true, true, ShortcutKind.AltShift);
             dual.Process(0xA5, true, true, ShortcutKind.AltShift);
@@ -117,6 +141,3 @@ internal static class SelfTest
         return exit;
     }
 }
-
-
-

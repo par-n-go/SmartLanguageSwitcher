@@ -53,7 +53,7 @@ internal sealed class SettingsForm : Form
         try { startup.Checked = Startup.IsEnabled(); } catch { startup.Checked = settings.StartWithWindows; }
         void StyleStartup() { startup.Text = startup.Checked ? "On" : "Off"; startup.BackColor = startup.Checked ? Accent : Surface; startup.ForeColor = startup.Checked ? Background : Muted; }
         startup.CheckedChanged += (_, _) => StyleStartup(); StyleStartup();
-        var version = Label("v1.0.2", 28, 337, 150, 24, 9, Muted);
+        var version = Label("v1.0.3", 28, 337, 150, 24, 9, Muted);
         var save = new SmoothButton { Text = "Save", Location = new(392, 325), Size = new(120, 40), FlatStyle = FlatStyle.Flat,
             BackColor = Accent, ForeColor = Background, Cursor = Cursors.Hand, UseVisualStyleBackColor = false };
         save.FlatAppearance.BorderSize = 0;

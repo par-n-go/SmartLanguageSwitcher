@@ -14,6 +14,8 @@ internal static class Native
     public const int WM_INPUTLANGCHANGEREQUEST = 0x0050;
     public const uint LLKHF_INJECTED = 0x10;
 
+    [DllImport("user32.dll")] private static extern short GetAsyncKeyState(int key);
+    public static bool IsKeyDown(uint key) => GetAsyncKeyState((int)key) < 0;
     public delegate nint HookProc(int code, nint wParam, nint lParam);
 
     [StructLayout(LayoutKind.Sequential)]
@@ -111,6 +113,3 @@ internal static class Native
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetGUIThreadInfo(uint threadId, ref GuiThreadInfo info);
 }
-
-
-
