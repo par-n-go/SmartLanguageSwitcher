@@ -91,7 +91,8 @@ internal sealed class AutoUpdater : IDisposable
     }
     public async Task CheckAsync(bool manual = false)
     {
-        if (busy || (!manual && !enabled())) return;
+        if (busy) { if (manual) notify("An update check is already running."); return; }
+        if (!manual && !enabled()) return;
         busy = true; string? directory = null; UpdatePlan? plan = null; bool handedOff = false;
         try
         {
@@ -103,6 +104,7 @@ internal sealed class AutoUpdater : IDisposable
             var release = ParseRelease(System.Text.Encoding.UTF8.GetString(json), CurrentVersion);
             if (release == null) { if (manual) notify("You're up to date."); return; }
             if (!manual && File.Exists(UpdateInstaller.FailedVersionPath) && File.ReadAllText(UpdateInstaller.FailedVersionPath) == release.Tag) return;
+            if (manual) notify("Downloading update…");
             var checksum = ParseChecksum(System.Text.Encoding.UTF8.GetString(await Download(release.HashUrl, 4096, token)));
             if (release.Digest != null && !release.Digest.Equals("sha256:" + checksum, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidDataException("Release checksums disagree.");
@@ -114,8 +116,9 @@ internal sealed class AutoUpdater : IDisposable
             if (!await Task.Run(() => VerifyHash(download, checksum), token)) throw new InvalidDataException("Update checksum failed.");
             if (!Version.TryParse(FileVersionInfo.GetVersionInfo(download).FileVersion, out var actualVersion) || actualVersion != release.Version)
                 throw new InvalidDataException("Update version does not match release.");
+            if (manual && !idle()) notify("Update ready. Close Settings to install.");
             for (int i = 0; !idle() && i < 300; i++) await Task.Delay(2000, token);
-            if (!idle() || (!manual && !enabled())) return;
+            if (!idle() || (!manual && !enabled())) { if (manual) notify("Update deferred. Check again when ready."); return; }
             plan = await Task.Run(() => UpdateInstaller.Prepare(process, download, checksum, release.Tag, directory), token);
             if (!idle() || (!manual && !enabled())) return;
             await UpdateInstaller.LaunchAsync(plan, token, () => idle() && (manual || enabled()));

@@ -22,7 +22,7 @@ internal sealed class SwitcherContext : ApplicationContext
         history = new(Native.CurrentForegroundLayout(), Native.Resolve(settings.LastLayout, installed), Native.Resolve(settings.PreviousLayout, installed));
         dispatcher.CreateControl();
         tray = new() { Icon = AppIcon.Load(), Text = "Smart Language Switcher", Visible = true };
-        updater = new AutoUpdater(() => settings.AutoUpdate, () => form == null && !history.Active && !Native.IsKeyDown(0x5B) && !Native.IsKeyDown(0x5C) && !Native.IsKeyDown(0x12) && !Native.IsKeyDown(0x11), ExitThread, Warn);
+        updater = new AutoUpdater(() => settings.AutoUpdate, () => form == null && !history.Active && !Native.IsKeyDown(0x5B) && !Native.IsKeyDown(0x5C) && !Native.IsKeyDown(0x12) && !Native.IsKeyDown(0x11), ExitThread, UpdateStatus);
         var menu = TrayMenu.Create(ShowSettings, paused => {
             enabled = !paused; EndSession();
             tray.Text = enabled ? "Smart Language Switcher" : "Smart Language Switcher (paused)";
@@ -104,12 +104,17 @@ internal sealed class SwitcherContext : ApplicationContext
         status = message;
         tray.ShowBalloonTip(5000, "Smart Language Switcher", message, ToolTipIcon.Warning);
     }
+    private void UpdateStatus(string message)
+    {
+        if (form != null && !form.IsDisposed) form.SetUpdateStatus(message);
+        else tray.ShowBalloonTip(5000, "Smart Language Switcher", message, ToolTipIcon.Info);
+    }
     private void ShowSettings()
     {
         EndSession();
         if (form == null || form.IsDisposed)
         {
-            form = new SettingsForm(settings);
+            form = new SettingsForm(settings, checkUpdates: () => updater.CheckAsync(manual: true));
             form.FormClosed += (_, _) => form = null;
         }
         form.Show(); form.Activate();

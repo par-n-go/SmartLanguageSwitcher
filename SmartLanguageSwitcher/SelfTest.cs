@@ -103,7 +103,17 @@ internal static class SelfTest
             finally { File.Delete(temp); }
             using (var hook = new KeyboardHook(() => false, () => ShortcutKind.AltShift, () => { }, () => { }))
                 Check(true, "Windows low-level hook installs and disposes");
-            using (var settingsForm = new SettingsForm(new())) { settingsForm.CreateControl(); Check(settingsForm.Controls.Count == 12 && settingsForm.Icon != null, "settings form and custom icon initialize"); }
+            int manualChecks = 0;
+            using (var settingsForm = new SettingsForm(new() { AutoUpdate = false }, render: true,
+                checkUpdates: () => { manualChecks++; return Task.CompletedTask; }))
+            {
+                settingsForm.Opacity = 0; settingsForm.ShowInTaskbar = false; settingsForm.Show();
+                Check(settingsForm.Icon != null, "settings form and custom icon initialize");
+                var checkButton = settingsForm.Controls.OfType<Button>().Single(c => c.Text == "Check for updates");
+                checkButton.PerformClick(); checkButton.PerformClick();
+                Check(manualChecks == 2 && checkButton.Enabled, "manual update button works repeatedly with automatic updates disabled");
+                settingsForm.Close();
+            }
             UpdateTests.Unit(Check);
             var installed = Native.InstalledLayouts();
             nint temporaryLayout = 0;

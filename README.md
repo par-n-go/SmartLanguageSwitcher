@@ -7,6 +7,7 @@ A small Windows 11 tray app. Switch to your previous keyboard layout, or hold th
 - Choose **Alt+Shift**, **Ctrl+Shift**, or **Win+Space**.
 - Release the modifier to confirm. Double-click the tray icon for settings.
 - Auto-updates check GitHub on launch and every six hours. Disable in settings.
+- **Check for updates** in Settings checks immediately, even with auto-update off.
 - Put the EXE in a permanent folder before enabling **Start with Windows**.
 
 **Limits:** Disable the matching Windows Alt+Shift/Ctrl+Shift shortcut. Win+Space is best effort. Some elevated apps and IMEs may reject switching.

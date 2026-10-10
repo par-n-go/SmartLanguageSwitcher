@@ -1,6 +1,6 @@
-# v1.1.0
+# v1.1.1
 
-- Automatic GitHub updates with checksum verification and restart rollback.
-- Auto-update toggle and manual tray check.
+- Check for updates button in Settings, with inline status.
+- Manual checks work with auto-update off. Close Settings to install a downloaded update.
 
-Install this version once; future updates are automatic. Requires a writable EXE folder. The EXE remains unsigned.
+The EXE remains unsigned.

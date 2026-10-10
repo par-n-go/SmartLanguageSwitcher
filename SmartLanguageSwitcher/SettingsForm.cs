@@ -6,8 +6,10 @@ internal sealed class SettingsForm : Form
 {
     [DllImport("dwmapi.dll")] private static extern int DwmSetWindowAttribute(nint hwnd, int attribute, ref int value, int size);
     private readonly bool renderOnly;
+    private readonly Label updateStatus = Label("", 234, 368, 278, 40, 9, Muted);
+    internal void SetUpdateStatus(string message) { if (!IsDisposed) updateStatus.Text = message; }
     protected override bool ShowWithoutActivation => renderOnly;
-    public SettingsForm(Settings settings, bool preview = false, bool render = false)
+    public SettingsForm(Settings settings, bool preview = false, bool render = false, Func<Task>? checkUpdates = null)
     {
         renderOnly = render;
         Text = "Smart Language Switcher";
@@ -16,7 +18,7 @@ internal sealed class SettingsForm : Form
         Font = new Font("Segoe UI", 10);
         BackColor = Background; ForeColor = Color.White;
         AutoScaleDimensions = new SizeF(96, 96); AutoScaleMode = AutoScaleMode.Dpi;
-        ClientSize = new Size(540, 445);
+        ClientSize = new Size(540, 493);
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false; MinimizeBox = false; StartPosition = FormStartPosition.CenterScreen;
         HandleCreated += (_, _) => { int dark = 1; DwmSetWindowAttribute(Handle, 20, ref dark, sizeof(int)); };
@@ -60,8 +62,18 @@ internal sealed class SettingsForm : Form
         autoUpdate.FlatAppearance.BorderSize = 0;
         void StyleUpdate() { autoUpdate.Text = autoUpdate.Checked ? "On" : "Off"; autoUpdate.BackColor = autoUpdate.Checked ? Accent : Surface; autoUpdate.ForeColor = autoUpdate.Checked ? Background : Muted; }
         autoUpdate.CheckedChanged += (_, _) => StyleUpdate(); StyleUpdate();
-        var version = Label("v" + AutoUpdater.CurrentVersion.ToString(3), 28, 392, 150, 24, 9, Muted);
-        var save = new SmoothButton { Text = "Save", Location = new(392, 380), Size = new(120, 40), FlatStyle = FlatStyle.Flat,
+        var check = new SmoothButton { Text = "Check for updates", Location = new(28, 364), Size = new(190, 40), FlatStyle = FlatStyle.Flat,
+            BackColor = Surface, ForeColor = Color.White, Cursor = Cursors.Hand, UseVisualStyleBackColor = false, AccessibleName = "Check for updates" };
+        check.FlatAppearance.BorderSize = 0;
+        check.Click += async (_, _) => {
+            if (checkUpdates == null) { SetUpdateStatus("Preview only."); return; }
+            check.Enabled = false;
+            SetUpdateStatus("Checking…");
+            try { await checkUpdates(); }
+            finally { if (!IsDisposed) check.Enabled = true; }
+        };
+        var version = Label("v" + AutoUpdater.CurrentVersion.ToString(3), 28, 440, 150, 24, 9, Muted);
+        var save = new SmoothButton { Text = "Save", Location = new(392, 428), Size = new(120, 40), FlatStyle = FlatStyle.Flat,
             BackColor = Accent, ForeColor = Background, Cursor = Cursors.Hand, UseVisualStyleBackColor = false };
         save.FlatAppearance.BorderSize = 0;
         save.Click += (_, _) => {
@@ -76,7 +88,7 @@ internal sealed class SettingsForm : Form
             }
             catch (Exception ex) { MessageBox.Show(this, ex.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning); }
         };
-        Controls.AddRange([image, title, subtitle, heading, shortcutPanel, hint, startupLabel, startup, updateLabel, autoUpdate, version, save]);
+        Controls.AddRange([image, title, subtitle, heading, shortcutPanel, hint, startupLabel, startup, updateLabel, autoUpdate, check, updateStatus, version, save]);
         void LayoutHeader()
         {
             title.Size = title.GetPreferredSize(new Size(title.MaximumSize.Width, 0));
