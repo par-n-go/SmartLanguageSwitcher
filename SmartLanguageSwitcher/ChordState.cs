@@ -17,7 +17,9 @@ internal sealed class ChordState
     {
         // The current hook event precedes its async state update; never query that key.
         // Only prune observed modifiers. A snapshot must never arm a new shortcut.
-        held.RemoveWhere(key => key != eventKey && PrimaryModifier(key) && !isDown(key));
+        // Consumed Shift-down is invisible to async state; keep it until its key-up.
+        held.RemoveWhere(key => key != eventKey &&
+            (PrimaryModifier(key) || (key is 0x10 or 0xA0 or 0xA1 && !swallowed.Contains(key))) && !isDown(key));
         if (session is not { } mode || ModifierHeld(mode)) return false;
         session = null;
         return true;

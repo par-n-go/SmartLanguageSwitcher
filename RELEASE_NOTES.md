@@ -1,6 +1,6 @@
-# v1.1.1
+# v1.1.2
 
-- Check for updates button in Settings, with inline status.
-- Manual checks work with auto-update off. Close Settings to install a downloaded update.
+- Fix Win+Space being ignored after a missed Shift release.
+- Preserve Shift exclusion while physically held and prevent repeat cycling with Alt+Shift/Ctrl+Shift.
 
-The EXE remains unsigned.
+Win+Space remains best effort. This fixes one reproducible cause of missed shortcuts, not every Windows or application conflict. The EXE remains unsigned.

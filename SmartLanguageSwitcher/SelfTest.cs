@@ -55,6 +55,25 @@ internal static class SelfTest
                 Check(!recovered.Process(trigger, true, true, mode, _ => false).Step, "typing after synthetic release does not switch " + modifier);
             }
             var snapshotOnly = new ChordState();
+            foreach (uint shift in new uint[] { 0x10, 0xA0, 0xA1 })
+            {
+                var missedShift = new ChordState();
+                missedShift.Process(shift, true, true, ShortcutKind.WinSpace);
+                missedShift.Process(0x5B, true, true, ShortcutKind.WinSpace);
+                Check(missedShift.Process(0x20, true, true, ShortcutKind.WinSpace, key => key == 0x5B).Step,
+                    "missed Shift release no longer blocks Win+Space " + shift);
+                var heldShift = new ChordState();
+                heldShift.Process(shift, true, true, ShortcutKind.WinSpace);
+                heldShift.Process(0x5B, true, true, ShortcutKind.WinSpace);
+                Check(!heldShift.Process(0x20, true, true, ShortcutKind.WinSpace, key => key == shift || key == 0x5B).Step,
+                    "physically held Shift still excludes Win+Space " + shift);
+                var consumedShift = new ChordState();
+                consumedShift.Process(0xA4, true, true, ShortcutKind.AltShift);
+                consumedShift.Process(shift, true, true, ShortcutKind.AltShift);
+                consumedShift.Reconcile(key => key == 0xA4);
+                Check(!consumedShift.Process(shift, true, true, ShortcutKind.AltShift).Step,
+                    "suppressed Shift stays held despite async state until release " + shift);
+            }
             Check(!snapshotOnly.Process(0x20, true, true, ShortcutKind.WinSpace, _ => true).Step, "snapshot cannot arm an unobserved Win chord");
             var bothWin = new ChordState();
             bothWin.Process(0x5B, true, true, ShortcutKind.WinSpace);
