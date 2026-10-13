@@ -12,13 +12,13 @@ To disable native Alt+Shift/Ctrl+Shift: Settings → Time & language → Typing 
 
 The foreground thread's HKL is sampled every 100 ms. External changes and application focus changes update a global recent-layout pair. Intermediate session selections are excluded. Requests have 800 ms to be confirmed; failures follow the actual observed layout. Fast changes between samples may be missed.
 
-Settings are atomically replaced in `%APPDATA%\SmartLanguageSwitcher\settings.json`. Corrupt settings fall back to defaults; removed layouts are ignored. HKLs are not stable identifiers for every IME/profile across restarts. TSF/IME modes, elevated apps, games, remote sessions and secure desktop are not universally supported. A stalled UI thread may cause Windows to remove the keyboard hook.
+Settings are atomically replaced in `%APPDATA%\SmartLanguageSwitcher\settings.json`. Corrupt settings fall back to defaults; removed layouts are ignored. HKLs are not stable identifiers for every IME/profile across restarts. TSF/IME modes, elevated apps, games, remote sessions and secure desktop are not universally supported. The hook runs on a dedicated message-loop thread, independent of UI and settings I/O. Because Windows provides no notification when it silently removes a timed-out hook, the app renews it every 30 seconds once no shortcut is active, keys are released and keyboard input has been idle for 500 ms. Failed installation is retried after five seconds. Recovery is deferred while typing; elevated or secure desktops can still prevent input access.
 
 Startup uses `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\SmartLanguageSwitcher`. Windows Startup Apps can separately disable it. To uninstall: disable startup, exit, delete the EXE and optionally the settings folder.
 
 ## Validation and releases
 
-`--self-test <report.json>` runs deterministic chord/history/persistence tests, hook installation, icon/settings initialization, and real Win32 layout requests against a test window. `scripts/Validate.ps1` executes the packaged EXE with a timeout. A runner with one layout temporarily loads French. Tests do not enable startup or write production settings.
+`--self-test <report.json>` runs deterministic chord/history/persistence tests, hook installation and recovery after forced removal, input delivery while the caller is not pumping messages, icon/settings initialization, and real Win32 layout requests against a test window. `scripts/Validate.ps1` executes the packaged EXE with a timeout. A runner with one layout temporarily loads French. Tests do not enable startup or write production settings.
 
 Physical Win+Space interaction with the shell requires manual testing; simulated input did not reliably reproduce the reported Start-menu behavior. Test Win alone, both Win keys with Space, repeated Space presses, external layout changes and startup after sign-in. The settings UI can be inspected without saving with `--preview-settings`.
 

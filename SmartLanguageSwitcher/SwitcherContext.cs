@@ -24,13 +24,13 @@ internal sealed class SwitcherContext : ApplicationContext
         tray = new() { Icon = AppIcon.Load(), Text = "Smart Language Switcher", Visible = true };
         updater = new AutoUpdater(() => settings.AutoUpdate, () => form == null && !history.Active && !Native.IsKeyDown(0x5B) && !Native.IsKeyDown(0x5C) && !Native.IsKeyDown(0x12) && !Native.IsKeyDown(0x11), ExitThread, UpdateStatus);
         var menu = TrayMenu.Create(ShowSettings, paused => {
-            enabled = !paused; EndSession();
+            enabled = !paused; ConfigureHook(); EndSession();
             tray.Text = enabled ? "Smart Language Switcher" : "Smart Language Switcher (paused)";
         }, ExitThread, () => _ = updater.CheckAsync(manual: true));
         tray.ContextMenuStrip = menu;
         tray.DoubleClick += (_, _) => ShowSettings();
         // Queue all window queries, requests and disk work outside the low-level hook.
-        hook = new(() => enabled && form == null, () => settings.Shortcut,
+        hook = new(enabled, settings.Shortcut,
             QueueStep, () => dispatcher.BeginInvoke(Release));
         poll.Tick += (_, _) => Observe();
         poll.Start();
@@ -51,6 +51,7 @@ internal sealed class SwitcherContext : ApplicationContext
             Step();
         });
     }
+    private void ConfigureHook() => hook.Configure(enabled && form == null, settings.Shortcut);
     private void Step()
     {
         var window = Native.GetForegroundWindow();
@@ -69,7 +70,6 @@ internal sealed class SwitcherContext : ApplicationContext
     private void Release() { released = true; Observe(); }
     private void Observe()
     {
-        hook.Reconcile();
         var actual = Native.CurrentForegroundLayout();
         if (history.Active)
         {
@@ -115,8 +115,9 @@ internal sealed class SwitcherContext : ApplicationContext
         if (form == null || form.IsDisposed)
         {
             form = new SettingsForm(settings, checkUpdates: () => updater.CheckAsync(manual: true));
-            form.FormClosed += (_, _) => form = null;
+            form.FormClosed += (_, _) => { form = null; hook.Configure(enabled, settings.Shortcut); };
         }
+        hook.Configure(false, settings.Shortcut);
         form.Show(); form.Activate();
     }
     protected override void ExitThreadCore()

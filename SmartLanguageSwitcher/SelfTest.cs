@@ -120,8 +120,11 @@ internal static class SelfTest
                 Check(Settings.Load(temp).Shortcut == ShortcutKind.AltShift, "invalid shortcut recovery");
             }
             finally { File.Delete(temp); }
-            using (var hook = new KeyboardHook(() => false, () => ShortcutKind.AltShift, () => { }, () => { }))
+            using (var hook = new KeyboardHook(false, ShortcutKind.AltShift, () => { }, () => { }))
+            {
                 Check(true, "Windows low-level hook installs and disposes");
+                hook.TestRecovery(Check);
+            }
             int manualChecks = 0;
             using (var settingsForm = new SettingsForm(new() { AutoUpdate = false }, render: true,
                 checkUpdates: () => { manualChecks++; return Task.CompletedTask; }))
