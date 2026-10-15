@@ -43,3 +43,7 @@ The packaged validation script also tests actual replacement, restart and rollba
 ## Image sources
 
 English SmartScreen illustrations by ToBeFree via Wikimedia Commons: [More info](https://commons.wikimedia.org/wiki/File:Smartscreen-warning-1-arrow.svg) and [Run anyway](https://commons.wikimedia.org/wiki/File:Smartscreen-warning-2-arrow.svg). Public domain; arrows changed from green to red. These are vector recreations of the Windows 10 prompts, not screenshots of this app. Windows 11 appearance may differ.
+
+## Optional diagnostics
+
+Disabled by default. To enable temporarily, put an ISO 8601 UTC expiry time in `%LOCALAPPDATA%\SmartLanguageSwitcher\diagnostics\enabled-until.txt`, then restart the app. Delete the file and restart to disable early. Logs contain modifier/shortcut events, layout identifiers and handler/UI status, never typed text or window titles. Writes run outside the keyboard hook. `shortcuts.log` rotates after 128 KiB with one previous file; a bounded queue limits pending entries. Logging stops at the expiry time. Diagnostic files stay local and are not uploaded.

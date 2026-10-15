@@ -1,6 +1,6 @@
-# v1.1.3
+# v1.1.4
 
-- Keep keyboard handling independent of the settings/UI thread.
-- Renew the keyboard hook during idle periods to recover after Windows removes it.
+- Add optional, bounded diagnostics for intermittent shortcut failures.
+- Records modifier/shortcut events, layout requests and hook/UI health; no typed text or window titles.
 
-Recovery may take up to 30 seconds plus a keyboard idle period. Win+Space remains best effort. The EXE remains unsigned.
+The reported intermittent failure is still under investigation. Win+Space remains best effort. The EXE remains unsigned.

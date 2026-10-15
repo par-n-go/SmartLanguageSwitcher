@@ -16,6 +16,7 @@ internal sealed class SwitcherContext : ApplicationContext
     private bool released;
     private long deadline;
     private string? status;
+    private long lastTrace;
     public SwitcherContext(Action? ready = null)
     {
         var installed = Native.InstalledLayouts();
@@ -45,6 +46,7 @@ internal sealed class SwitcherContext : ApplicationContext
         var expectedShortcut = settings.Shortcut;
         long requestedAt = Environment.TickCount64;
         dispatcher.BeginInvoke(() => {
+            ShortcutTrace.Write($"queued age={Environment.TickCount64 - requestedAt} focusSame={Native.GetForegroundWindow() == expectedWindow} enabled={enabled} settingsOpen={form != null}");
             if (!enabled || form != null || settings.Shortcut != expectedShortcut ||
                 expectedWindow == 0 || Native.GetForegroundWindow() != expectedWindow ||
                 Environment.TickCount64 - requestedAt > 250) return;
@@ -58,6 +60,7 @@ internal sealed class SwitcherContext : ApplicationContext
         if (history.Active && (window != sessionWindow || released)) EndSession();
         if (!history.Active) sessionWindow = window;
         target = history.Step(Native.CurrentForegroundLayout(), Native.InstalledLayouts());
+        ShortcutTrace.Write($"request layout={Native.LayoutId(target)} actual={Native.LayoutId(Native.CurrentForegroundLayout())} released={released}");
         if (target == 0) return;
         released = false;
         deadline = Environment.TickCount64 + 800;
@@ -67,10 +70,15 @@ internal sealed class SwitcherContext : ApplicationContext
             EndSession();
         }
     }
-    private void Release() { released = true; Observe(); }
+    private void Release() { ShortcutTrace.Write("release dispatched"); released = true; Observe(); }
     private void Observe()
     {
         var actual = Native.CurrentForegroundLayout();
+        if (ShortcutTrace.Enabled && Environment.TickCount64 - lastTrace >= 10000)
+        {
+            lastTrace = Environment.TickCount64;
+            ShortcutTrace.Write($"ui-alive actual={Native.LayoutId(actual)} target={Native.LayoutId(target)} active={history.Active} released={released} enabled={enabled} settingsOpen={form != null}");
+        }
         if (history.Active)
         {
             if (Native.GetForegroundWindow() != sessionWindow) { EndSession(); return; }
@@ -86,6 +94,7 @@ internal sealed class SwitcherContext : ApplicationContext
     }
     private void EndSession()
     {
+        ShortcutTrace.Write($"end active={history.Active} target={Native.LayoutId(target)} actual={Native.LayoutId(Native.CurrentForegroundLayout())}");
         history.Finish(Native.CurrentForegroundLayout());
         target = 0; released = false;
         Persist();

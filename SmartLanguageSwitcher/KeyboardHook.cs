@@ -32,6 +32,8 @@ internal sealed class KeyboardHook : IDisposable
                 bool down = (int)message is Native.WM_KEYDOWN or Native.WM_SYSKEYDOWN;
                 int config = Volatile.Read(ref configuration);
                 var mode = (ShortcutKind)(config >> 1);
+                if (ShortcutTrace.Enabled && (info.VkCode is 0x5B or 0x5C or 0xA0 or 0xA1 or 0xA2 or 0xA3 or 0xA4 or 0xA5 || (info.VkCode == 0x20 && (state.Active || Native.IsKeyDown(0x5B) || Native.IsKeyDown(0x5C)))))
+                    ShortcutTrace.Write($"key={info.VkCode:X} down={down} injected={(info.Flags & Native.LLKHF_INJECTED) != 0} active={state.Active} win={Native.IsKeyDown(0x5B)}/{Native.IsKeyDown(0x5C)}");
                 if ((info.Flags & Native.LLKHF_INJECTED) != 0)
                 {
                     if (!down || info.VkCode is 0x11 or 0xA2 or 0xA3)
@@ -43,6 +45,7 @@ internal sealed class KeyboardHook : IDisposable
                 else
                 {
                     var result = state.Process(info.VkCode, down, (config & 1) != 0, mode, Native.IsKeyDown);
+                    if (result.Step || result.Finish) ShortcutTrace.Write($"decision step={result.Step} finish={result.Finish}");
                     if (result.MaskStart) Native.MaskStartMenu();
                     if (result.Finish) finish();
                     if (result.Step) step();
@@ -70,7 +73,7 @@ internal sealed class KeyboardHook : IDisposable
             ready.Set();
             Application.Run(loop);
         }
-        catch (Exception ex) { startupError = ex; ready.Set(); }
+        catch (Exception ex) { startupError = ex; ShortcutTrace.Write("hook-thread-error=" + ex.GetType().Name); ready.Set(); }
         finally { if (handle != 0) Native.UnhookWindowsHookEx(handle); handle = 0; }
     }
     private void Install()
@@ -81,10 +84,11 @@ internal sealed class KeyboardHook : IDisposable
         if (previous != 0) Native.UnhookWindowsHookEx(previous);
         renewed = Environment.TickCount64;
         Interlocked.Increment(ref generation);
+        ShortcutTrace.Write("hook-installed generation=" + generation);
     }
     private void Maintain()
     {
-        if (state.Reconcile(Native.IsKeyDown)) finish();
+        if (state.Reconcile(Native.IsKeyDown)) { ShortcutTrace.Write("poll release"); finish(); }
         // Windows provides no notification when it removes a timed-out hook.
         // Renew during idle periods, never halfway through a shortcut or typing.
         long now = Environment.TickCount64;
