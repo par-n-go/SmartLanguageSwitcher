@@ -91,6 +91,20 @@ internal static class SelfTest
             altgr.Process(0xA5, true, true, ShortcutKind.AltShift);
             Check(!altgr.Process(0xA0, true, true, ShortcutKind.AltShift).Suppress, "Ctrl+Alt+Shift passes");
             var history = new LayoutHistory(1, 1, 2);
+            var filteredSettings = new Settings { ExcludeBritishEnglish = true };
+            nint us = 0x04090409, uk = 0x04090809, ru = 0x04190419, he = 0x040d040d;
+            nint[] allLayouts = [us, uk, ru, he];
+            var filtered = new LayoutHistory(us, us, uk, filteredSettings.AllowsLayout);
+            Check(filtered.Previous == 0 && filtered.Step(us, allLayouts) == ru, "excluded UK cannot be previous layout");
+            Check(filtered.Step(ru, allLayouts) == he && filtered.Step(he, allLayouts) == us, "cycle skips UK and keeps US Russian Hebrew");
+            filtered.Finish(ru); filtered.Observe(uk);
+            Check(filtered.Current == ru && filtered.Previous == us, "external UK does not replace recent history");
+            Check(filtered.Step(uk, allLayouts) == ru, "leaving external UK returns to most recent allowed layout");
+            Check(filtered.Step(ru, allLayouts) == us && filtered.Step(us, allLayouts) == he && filtered.Step(he, allLayouts) == ru,
+                "cycle started from excluded UK never returns to UK");
+            Check(new Settings().AllowsLayout(uk), "UK remains allowed by default");
+            Check(ShortcutTrace.ParseExpiry("2026-10-22T18:47:06.0070483Z\r\n") == new DateTime(2026, 10, 22, 18, 47, 6, DateTimeKind.Utc).AddTicks(70483), "diagnostic expiry parses invariant roundtrip timestamp with newline");
+            Check(ShortcutTrace.ParseExpiry("invalid") == default, "invalid diagnostic expiry disables logging");
             nint[] layouts = [1, 2, 3];
             Check(history.Step(1, layouts) == 2, "previous layout first");
             Check(history.Step(2, layouts) == 3, "cycle third layout");
@@ -111,9 +125,10 @@ internal static class SelfTest
             string temp = Path.Combine(Path.GetTempPath(), "SmartLanguageSwitcher-test-" + Guid.NewGuid() + ".json");
             try
             {
-                var settings = new Settings { Shortcut = ShortcutKind.CtrlShift, LastLayout = "1", PreviousLayout = "2" };
+                var settings = new Settings { Shortcut = ShortcutKind.CtrlShift, LastLayout = "1", PreviousLayout = "2", ExcludeBritishEnglish = true };
                 Check(settings.Save(temp), "settings save");
                 Check(Settings.Load(temp).PreviousLayout == "2", "settings roundtrip");
+                Check(Settings.Load(temp).ExcludeBritishEnglish, "UK exclusion persists");
                 File.WriteAllText(temp, "{broken");
                 Check(Settings.Load(temp).Shortcut == ShortcutKind.AltShift, "corrupt settings recovery");
                 File.WriteAllText(temp, "{\"Shortcut\":999}");

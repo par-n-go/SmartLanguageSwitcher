@@ -1,6 +1,6 @@
-# v1.1.4
+# v1.1.5
 
-- Add optional, bounded diagnostics for intermittent shortcut failures.
-- Records modifier/shortcut events, layout requests and hook/UI health; no typed text or window titles.
+- Optional UK exclusion from cycling and recent-layout history, without changing Windows languages.
+- Retry diagnostic activation after startup and parse its expiry independently of regional settings.
 
-The reported intermittent failure is still under investigation. Win+Space remains best effort. The EXE remains unsigned.
+The intermittent switching failure remains under investigation. Win+Space remains best effort. The EXE is unsigned.

@@ -46,4 +46,8 @@ English SmartScreen illustrations by ToBeFree via Wikimedia Commons: [More info]
 
 ## Optional diagnostics
 
-Disabled by default. To enable temporarily, put an ISO 8601 UTC expiry time in `%LOCALAPPDATA%\SmartLanguageSwitcher\diagnostics\enabled-until.txt`, then restart the app. Delete the file and restart to disable early. Logs contain modifier/shortcut events, layout identifiers and handler/UI status, never typed text or window titles. Writes run outside the keyboard hook. `shortcuts.log` rotates after 128 KiB with one previous file; a bounded queue limits pending entries. Logging stops at the expiry time. Diagnostic files stay local and are not uploaded.
+Disabled by default. To enable temporarily, put an ISO 8601 UTC expiry time in `%LOCALAPPDATA%\SmartLanguageSwitcher\diagnostics\enabled-until.txt`. Delete the file to disable early; changes are picked up within 30 seconds. Logs contain modifier/shortcut events, layout identifiers and handler/UI status, never typed text or window titles. Writes run outside the keyboard hook. `shortcuts.log` rotates after 128 KiB with one previous file; a bounded queue limits pending entries. Logging stops at the expiry time. Diagnostic files stay local and are not uploaded.
+
+Set `ExcludeBritishEnglish` to `true` in settings.json to omit English (United Kingdom) from the switcher's cycle and recent history. Default is false; Windows language settings are unchanged. If another application selects UK, the switcher leaves it on the next shortcut, choosing an allowed layout.
+
+Diagnostic activation is retried every 30 seconds, including after a temporary startup read failure. The expiry uses the invariant roundtrip format; enabling/disabling no longer requires restarting the application.

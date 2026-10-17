@@ -5,6 +5,8 @@ internal sealed class Settings
 {
     public ShortcutKind Shortcut { get; set; } = ShortcutKind.AltShift;
     public bool AutoUpdate { get; set; } = true;
+    public bool ExcludeBritishEnglish { get; set; }
+    internal bool AllowsLayout(nint layout) => !ExcludeBritishEnglish || (layout.ToInt64() & 0xffff) != 0x0809;
     public bool StartWithWindows { get; set; }
     public string? LastLayout { get; set; }
     public string? PreviousLayout { get; set; }

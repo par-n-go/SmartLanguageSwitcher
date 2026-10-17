@@ -7,19 +7,25 @@ internal static class ShortcutTrace
     private static DateTime expires;
     private static System.Threading.Timer? timer;
     private static int flushing;
+    private static long nextRefresh;
     internal static bool Enabled => DateTime.UtcNow < expires;
     internal static void Initialize()
     {
+        if (Environment.TickCount64 < nextRefresh) return;
+        nextRefresh = Environment.TickCount64 + 30000;
         try
         {
             string flag = Path.Combine(DirectoryPath, "enabled-until.txt");
-            if (!File.Exists(flag) || !DateTime.TryParse(File.ReadAllText(flag), null, System.Globalization.DateTimeStyles.RoundtripKind, out expires) || !Enabled) return;
+            expires = File.Exists(flag) ? ParseExpiry(File.ReadAllText(flag)) : default;
+            if (!Enabled || timer != null) return;
             timer = new System.Threading.Timer(_ => Flush(), null, 1000, 1000);
             Write("start version=" + AutoUpdater.CurrentVersion.ToString(3));
         }
         catch (IOException) { expires = default; }
         catch (UnauthorizedAccessException) { expires = default; }
     }
+    internal static DateTime ParseExpiry(string value) => DateTime.TryParseExact(value.Trim(), "O", System.Globalization.CultureInfo.InvariantCulture,
+        System.Globalization.DateTimeStyles.RoundtripKind, out var result) ? result.ToUniversalTime() : default;
     internal static void Write(string message)
     {
         if (!Enabled || lines.Count >= 1000) return;

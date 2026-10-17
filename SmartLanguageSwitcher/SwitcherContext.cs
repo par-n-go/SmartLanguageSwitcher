@@ -20,7 +20,7 @@ internal sealed class SwitcherContext : ApplicationContext
     public SwitcherContext(Action? ready = null)
     {
         var installed = Native.InstalledLayouts();
-        history = new(Native.CurrentForegroundLayout(), Native.Resolve(settings.LastLayout, installed), Native.Resolve(settings.PreviousLayout, installed));
+        history = new(Native.CurrentForegroundLayout(), Native.Resolve(settings.LastLayout, installed), Native.Resolve(settings.PreviousLayout, installed), settings.AllowsLayout);
         dispatcher.CreateControl();
         tray = new() { Icon = AppIcon.Load(), Text = "Smart Language Switcher", Visible = true };
         updater = new AutoUpdater(() => settings.AutoUpdate, () => form == null && !history.Active && !Native.IsKeyDown(0x5B) && !Native.IsKeyDown(0x5C) && !Native.IsKeyDown(0x12) && !Native.IsKeyDown(0x11), ExitThread, UpdateStatus);
@@ -73,6 +73,7 @@ internal sealed class SwitcherContext : ApplicationContext
     private void Release() { ShortcutTrace.Write("release dispatched"); released = true; Observe(); }
     private void Observe()
     {
+        ShortcutTrace.Initialize();
         var actual = Native.CurrentForegroundLayout();
         if (ShortcutTrace.Enabled && Environment.TickCount64 - lastTrace >= 10000)
         {
