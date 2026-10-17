@@ -51,3 +51,5 @@ Disabled by default. To enable temporarily, put an ISO 8601 UTC expiry time in `
 Set `ExcludeBritishEnglish` to `true` in settings.json to omit English (United Kingdom) from the switcher's cycle and recent history. Default is false; Windows language settings are unchanged. If another application selects UK, the switcher leaves it on the next shortcut, choosing an allowed layout.
 
 Diagnostic activation is retried every 30 seconds, including after a temporary startup read failure. The expiry uses the invariant roundtrip format; enabling/disabling no longer requires restarting the application.
+
+Session lock/disconnect resets the unfinished keyboard chord and suspends hook renewal. Unlock/reconnect requests renewal at the next keyboard idle period instead of waiting for the normal 30-second interval. Pause and shortcut settings are preserved. Tests simulate these notifications and verify input delivery afterward; they do not lock the computer or validate the Windows sign-in screen.

@@ -1,4 +1,5 @@
 using System.Drawing;
+using Microsoft.Win32;
 namespace SmartLanguageSwitcher;
 internal sealed class SwitcherContext : ApplicationContext
 {
@@ -33,6 +34,7 @@ internal sealed class SwitcherContext : ApplicationContext
         // Queue all window queries, requests and disk work outside the low-level hook.
         hook = new(enabled, settings.Shortcut,
             QueueStep, () => dispatcher.BeginInvoke(Release));
+        SystemEvents.SessionSwitch += SessionChanged;
         poll.Tick += (_, _) => Observe();
         poll.Start();
         updateTimer.Tick += (_, _) => { updateTimer.Interval = 6 * 60 * 60 * 1000; _ = updater.CheckAsync(); };
@@ -54,6 +56,7 @@ internal sealed class SwitcherContext : ApplicationContext
         });
     }
     private void ConfigureHook() => hook.Configure(enabled && form == null, settings.Shortcut);
+    private void SessionChanged(object sender, SessionSwitchEventArgs e) => hook.SessionChanged(e.Reason);
     private void Step()
     {
         var window = Native.GetForegroundWindow();
@@ -132,6 +135,7 @@ internal sealed class SwitcherContext : ApplicationContext
     }
     protected override void ExitThreadCore()
     {
+        SystemEvents.SessionSwitch -= SessionChanged;
         updateTimer.Dispose(); updater.Dispose();
         EndSession(); poll.Dispose(); hook.Dispose(); form?.Dispose();
         tray.Visible = false; tray.ContextMenuStrip?.Dispose(); tray.Icon?.Dispose(); tray.Dispose(); dispatcher.Dispose();
